@@ -87,9 +87,16 @@ class TestClass(unittest.TestCase):
         total_score = bowling_game.evaluate(single_frame)
         self.assertEqual(total_score, single_frame_score)
 
-    def test_case_two_strikes_in_two_frames(self):
+    def test_case_two_strikes_in_three_frames(self):
         single_frame = "X17X44"
         single_frame_score = 1*(10+1+7) + 1*(1+7) + 1*(10+4+4)
+        bowling_game = Bowling()
+        total_score = bowling_game.evaluate(single_frame)
+        self.assertEqual(total_score, single_frame_score)
+
+    def test_case_two_strikes_and_a_spare_in_three_frames(self):
+        single_frame = "X1/X44"
+        single_frame_score = 1*(10+1+9) + 1*(1+9+10) + 1*(10+4+4)
         bowling_game = Bowling()
         total_score = bowling_game.evaluate(single_frame)
         self.assertEqual(total_score, single_frame_score)

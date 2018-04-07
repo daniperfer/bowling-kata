@@ -20,6 +20,7 @@ class Bowling:
                 if n_try < len(game)-3:
                     self.bonus += 2
             if score == '/':
+                # score for second ball in a spare depends on pins knocked down by the previous ball
                 previous_points = int(game[n_try-1])
                 self.overall += (10 - previous_points)
                 if self.bonus > 0:
