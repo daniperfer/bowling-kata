@@ -1,44 +1,41 @@
 class Bowling:
     def __init__(self):
         self.overall = 0
-        self.bonus = 0
-        # there might be bonus points from a frame before (strike or spare) and from two frames before (strike)
-        self.bonus_from_previous = 0
-        self.bonus_before_previous = 0
 
     def evaluate(self, game):
-        for n_try, score in enumerate(game):
+        self.overall = 0
+        bonus_scores = [0] * len(game)
+        # The bonus scores table keeps how many bonus scores have to be added to the overall score in each try
+        # A strike ('X') allocates two bonus scores: one in the next try, and another one in the try after the next
+        # A spare ('/') only allocates a bonus score in the next try
+        # Thus, the maximum number of bonus scores to add in any try is 2
+
+        for k_try, score in enumerate(game):
             if score == 'X':
-                self.overall += 10
-                if self.bonus > 0:
-                    self.overall += 10
-                    self.bonus -= 1
-                if self.bonus > 1:
-                    self.overall += 10
-                    self.bonus -= 1
-                # strikes only give future bonus points if they occur before 10th frame
-                if n_try < len(game)-3:
-                    self.bonus += 2
+                # This is a strike
+                self.overall += 10 * (1 + bonus_scores[k_try])
+
+                # A strike only allocates future bonus points if it occur before the 10th frame of a game
+                # If a strike occurred in the last try of a game, it was an extra ball --> no bonus points allocation
+                # If it occurred in the second-to-last try: it was an extra ball --> no bonus points allocation
+                # If it occurred in the third-to-last try: it was the last (10th) frame: no bonus points allocation
+                if k_try < len(game) - 3:
+                    bonus_scores[k_try+1] += 1
+                    bonus_scores[k_try+2] += 1
+
             if score == '/':
-                # score for second ball in a spare depends on pins knocked down by the previous ball
-                previous_points = int(game[n_try-1])
-                self.overall += (10 - previous_points)
-                if self.bonus > 0:
-                    self.overall += (10 - previous_points)
-                    self.bonus -= 1
-                if self.bonus > 1:
-                    self.overall += (10 - previous_points)
-                    self.bonus -= 1
-                # spares only give future bonus points if they occur before 10th frame
-                if n_try < len(game)-2:
-                    self.bonus += 1
+                # This is a spare: in two tries all pins were knocked down
+                # The score for a second try of a spare depends on how many pins were knocked down in the first try
+                current_try_score = 10 - int(game[k_try - 1])
+                self.overall += current_try_score * (1 + bonus_scores[k_try])
+
+                # A spare only give future bonus points if it occur before the 10th frame of a game
+                # If a spare occurred in the last try of a game, it was an extra ball --> no bonus points allocation
+                # If it occurred in the second-to-last try: it was the last (10th) frame: no bonus points allocation
+                if k_try < len(game) - 2:
+                    bonus_scores[k_try+1] += 1
+
             if score.isdigit():
-                self.overall += int(score)
-                if self.bonus > 0:
-                    self.overall += int(score)
-                    self.bonus -= 1
-                if self.bonus > 1:
-                    self.overall += int(score)
-                    self.bonus -= 1
+                self.overall += int(score) * (1 + bonus_scores[k_try])
 
         return self.overall
