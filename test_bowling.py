@@ -2,7 +2,7 @@ import unittest
 from bowling import Bowling
 
 
-class TestClass(unittest.TestCase):
+class TestBowlingGames(unittest.TestCase):
     def test_case_all_strikes(self):
         game = "XXXXXXXXXXXX"
         game_score = 10*30
@@ -55,6 +55,13 @@ class TestClass(unittest.TestCase):
     def test_case_nine_pins_in_all_frames(self):
         game = "9-9-9-9-9-9-9-9-9-9-"
         game_score = 10*9
+        bowling_game = Bowling()
+        total_score = bowling_game.evaluate(game)
+        self.assertEqual(total_score, game_score)
+
+    def test_case_a_miss_after_a_strike(self):
+        game = "9-9-X9-9-9-9-9-9-9-"
+        game_score = 9*(9+0) + 1*(10+9+0)
         bowling_game = Bowling()
         total_score = bowling_game.evaluate(game)
         self.assertEqual(total_score, game_score)
